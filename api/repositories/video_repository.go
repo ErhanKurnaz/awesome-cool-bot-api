@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/entities"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/entities"
 	"gorm.io/gorm"
 )
 

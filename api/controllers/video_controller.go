@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/entities"
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/middlewares"
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/services"
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/validators"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/entities"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/middlewares"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/services"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/validators"
 	"github.com/gin-gonic/gin"
 	validator2 "github.com/go-playground/validator/v10"
 )

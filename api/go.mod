@@ -1,4 +1,4 @@
-module github.com/ErhanKurnaz/awesome-cool-bot-api
+module github.com/ErhanKurnaz/awesome-cool-bot/api
 
 go 1.17
 

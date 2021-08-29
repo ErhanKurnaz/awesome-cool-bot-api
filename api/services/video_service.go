@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/entities"
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/repositories"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/entities"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/repositories"
 )
 
 type VideoService interface {

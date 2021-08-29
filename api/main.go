@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/controllers"
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/database"
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/repositories"
-	"github.com/ErhanKurnaz/awesome-cool-bot-api/services"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/controllers"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/database"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/repositories"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/services"
 	"github.com/gin-gonic/gin"
 )
 
