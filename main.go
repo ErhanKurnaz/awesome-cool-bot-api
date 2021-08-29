@@ -5,13 +5,18 @@ import (
 	"net/http"
 
 	"github.com/ErhanKurnaz/awesome-cool-bot-api/controllers"
+	"github.com/ErhanKurnaz/awesome-cool-bot-api/database"
+	"github.com/ErhanKurnaz/awesome-cool-bot-api/repositories"
 	"github.com/ErhanKurnaz/awesome-cool-bot-api/services"
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	videoService = services.NewVideoService()
+	db = database.SetupDBConnection()
+	videoRepository = repositories.NewVideoRepository(db)
+	videoService = services.NewVideoService(videoRepository)
 )
+
 
 func setupRouter() *gin.Engine {
 	engine := gin.Default()
@@ -29,6 +34,7 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	r := setupRouter()
-	// Listen and Server in 0.0.0.0:8080
-	log.Fatal(r.Run(":4200"))
+	defer database.Close(db)
+	// Listen and Server in 0.0.0.0:4200
+	log.Println(r.Run(":4200"))
 }
