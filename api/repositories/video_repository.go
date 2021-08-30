@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/entities"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type VideoRepository interface {
@@ -13,25 +14,25 @@ type VideoRepository interface {
 }
 
 type videoRepository struct {
-	connection *gorm.DB
+	db *gorm.DB
 }
 
 
 func (repository *videoRepository) Save(video entities.Video) {
-	repository.connection.Create(&video)
+	repository.db.Create(&video)
 }
 
 func (repository *videoRepository) Update(video entities.Video) {
-	repository.connection.Save(&video)
+	repository.db.Save(&video)
 }
 
 func (repository *videoRepository) Delete(video entities.Video) {
-	repository.connection.Delete(&video)
+	repository.db.Delete(&video)
 }
 
 func (repository *videoRepository) FindAll() *[]entities.Video {
 	var videos []entities.Video
-	repository.connection.Set("gorm:auto_preload", true).Find(&videos)
+	repository.db.Preload(clause.Associations).Find(&videos)
 	return &videos
 }
 
@@ -43,6 +44,6 @@ func NewVideoRepository(db *gorm.DB) VideoRepository {
 	}
 
 	return &videoRepository{
-		connection: db,
+		db: db,
 	}
 }

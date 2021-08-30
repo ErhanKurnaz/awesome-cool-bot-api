@@ -9,6 +9,7 @@ import (
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/repositories"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/services"
 	"github.com/gin-gonic/gin"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 var (

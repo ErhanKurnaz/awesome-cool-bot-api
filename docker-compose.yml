@@ -1,0 +1,36 @@
+version: '3'
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    ports:
+      - "4200:4200"
+      - "2345:2345"
+    links:
+      - mysql:db
+    tty: true
+    volumes:
+      - ./api:/go/api/app
+    depends_on:
+      - mysql
+    cap_add:
+      - SYS_PTRACE
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: awesome-user
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: awesome-db
+    ports:
+      - "3336:3306"
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql:cached
