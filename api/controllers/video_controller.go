@@ -14,12 +14,32 @@ import (
 
 var validate *validator2.Validate
 
+// FindAll godoc
+// @Summary Finds all videos in the system
+// @ID FindAll videos
+// @Tags videos,list
+// @Produce json
+// @Success 200 {array} entities.Video
+// @Failure 400 {object} interface{}
+// @Router /videos [get]
 func findAll(service services.VideoService) func (ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{ "videos": service.FindAll() })
+		ctx.JSON(http.StatusOK, service.FindAll())
 	}
 }
 
+// CreateVideo godoc
+// @Summary Creates a new video in the system
+// @Security bearerAuth
+// @ID Create videos
+// @Tags videos,create
+// @Accept json
+// @Produce json
+// @Param video body entities.Video true "Create video"
+// @Success 200 {object} entities.Video
+// @Failure 422 {object} interface{}
+// @Failure 400 {object} interface{}
+// @Router /videos [post]
 func createVideo(service services.VideoService) func (ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		var video entities.Video
@@ -37,10 +57,22 @@ func createVideo(service services.VideoService) func (ctx *gin.Context) {
 		}
 
 		service.Save(video)
-		ctx.JSON(http.StatusOK, gin.H{ "video": video })
+		ctx.JSON(http.StatusOK, video)
 	}
 }
 
+// UpdateVideo godoc
+// @Summary Update a video in the system
+// @ID Update videos
+// @Tags videos,update
+// @Accept json
+// @Produce json
+// @Param video body entities.Video true "Update video"
+// @Param  id path int true "Video ID"
+// @Success 200 {object} entities.Video
+// @Failure 422 {object} interface{}
+// @Failure 400 {object} interface{}
+// @Router /videos/{id} [put]
 func updateVideo(service services.VideoService) func (ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		var video entities.Video
@@ -65,11 +97,21 @@ func updateVideo(service services.VideoService) func (ctx *gin.Context) {
 			return
 		}
 
-		service.Save(video)
+		service.Update(video)
 		ctx.JSON(http.StatusOK, gin.H{ "video": video })
 	}
 }
 
+// DeleteVideo godoc
+// @Summary Delete a video in the system
+// @ID Delete videos
+// @Tags videos,delete
+// @Produce json
+// @Param  id path int true "Video ID"
+// @Success 200 {object} entities.Video
+// @Failure 422 {object} interface{}
+// @Failure 400 {object} interface{}
+// @Router /videos/{id} [delete]
 func deleteVideo(service services.VideoService) func (ctx *gin.Context) {
 	return func (ctx *gin.Context) {
 		var video entities.Video

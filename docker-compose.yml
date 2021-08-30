@@ -22,6 +22,10 @@ services:
       - mysql
     cap_add:
       - SYS_PTRACE
+    security_opt:
+      - "seccomp:unconfined"
+    networks:
+      - backend
 
   mysql:
     image: mysql:5.7
@@ -34,3 +38,7 @@ services:
       - "3336:3306"
     volumes:
       - ./docker/mysql/data:/var/lib/mysql:cached
+    security_opt:
+      - "seccomp:unconfined"
+    networks:
+      - backend
