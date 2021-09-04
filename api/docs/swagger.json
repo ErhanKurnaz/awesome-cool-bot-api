@@ -34,11 +34,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],

@@ -7,6 +7,7 @@ import (
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/controllers"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/database"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/docs"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/middlewares"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/repositories"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/services"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,7 @@ func setupRouter() *gin.Engine {
 	url := ginSwagger.URL("http://localhost:4200/swagger/doc.json") // The url pointing to API definition
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
+    engine.Use(middlewares.ResponseMiddleware(), middlewares.ErrorResponseMiddleware())
 	r := engine.Group("api/v1")
 
 	// Ping test

@@ -1,0 +1,24 @@
+{
+  "configurations": {
+    "run": {
+      "adapter": "vscode-go",
+      "configuration": {
+        "request": "launch",
+        "program": "${fileDirname}",
+        "mode": "debug",
+        "dlvToolPath": "$HOME/go/bin/dlv"
+      }
+    },
+    "remote": {
+      "adapter": "vscode-go",
+      "configuration": {
+        "request": "attach",
+        "port": 2345,
+        "program": "${fileDirname}",
+        "mode": "remote",
+        "host": "127.0.0.1",
+        "dlvToolPath": "$HOME/go/bin/dlv"
+      }
+    }
+  }
+}

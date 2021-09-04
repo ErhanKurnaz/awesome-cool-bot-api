@@ -53,11 +53,6 @@ var doc = `{
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],

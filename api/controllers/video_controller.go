@@ -5,14 +5,14 @@ import (
 	"strconv"
 
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/entities"
+
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/constants"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/middlewares"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/services"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/validators"
 	"github.com/gin-gonic/gin"
 	validator2 "github.com/go-playground/validator/v10"
 )
-
-var validate *validator2.Validate
 
 // FindAll godoc
 // @Summary Finds all videos in the system
@@ -22,42 +22,31 @@ var validate *validator2.Validate
 // @Success 200 {array} entities.Video
 // @Failure 400 {object} interface{}
 // @Router /videos [get]
-func findAll(service services.VideoService) func (ctx *gin.Context) {
+func findAll(service services.VideoService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, service.FindAll())
+		ctx.Set(constants.ResponseField, service.FindAll())
 	}
 }
 
 // CreateVideo godoc
 // @Summary Creates a new video in the system
-// @Security bearerAuth
 // @ID Create videos
 // @Tags videos,create
 // @Accept json
 // @Produce json
 // @Param video body entities.Video true "Create video"
-// @Success 200 {object} entities.Video
+// @Success 201 {object} entities.Video
 // @Failure 422 {object} interface{}
 // @Failure 400 {object} interface{}
 // @Router /videos [post]
-func createVideo(service services.VideoService) func (ctx *gin.Context) {
+func createVideo(service services.VideoService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		var video entities.Video
-		e := ctx.ShouldBindJSON(&video)
-
-		if e != nil {
-			ctx.JSON(http.StatusUnprocessableEntity, gin.H { "error": e.Error() })
-			return
-		}
-
-		e = validate.Struct(video)
-		if e != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H { "error": e.Error() })
-			return
-		}
+		body, _ := ctx.Get(constants.BodyField)
+		video := body.(*entities.Video)
 
 		service.Save(video)
-		ctx.JSON(http.StatusOK, video)
+		ctx.Set(constants.ResponseField, video)
+		ctx.Set(constants.StatusField, http.StatusCreated)
 	}
 }
 
@@ -73,32 +62,13 @@ func createVideo(service services.VideoService) func (ctx *gin.Context) {
 // @Failure 422 {object} interface{}
 // @Failure 400 {object} interface{}
 // @Router /videos/{id} [put]
-func updateVideo(service services.VideoService) func (ctx *gin.Context) {
+func updateVideo(service services.VideoService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		var video entities.Video
-		e := ctx.ShouldBindJSON(&video)
-
-		if e != nil {
-			ctx.JSON(http.StatusUnprocessableEntity, gin.H { "error": e.Error() })
-			return
-		}
-
-		id, e := strconv.ParseUint(ctx.Param("id"), 10, 0)
-
-		if e != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H { "error": "no ID parameter provided" })
-			return
-		}
-
-		video.ID = id
-		e = validate.Struct(video)
-		if e != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H { "error": e.Error() })
-			return
-		}
+		body, _ := ctx.Get(constants.BodyField)
+		video := body.(*entities.Video)
 
 		service.Update(video)
-		ctx.JSON(http.StatusOK, gin.H{ "video": video })
+		ctx.Set(constants.ResponseField, video)
 	}
 }
 
@@ -112,31 +82,39 @@ func updateVideo(service services.VideoService) func (ctx *gin.Context) {
 // @Failure 422 {object} interface{}
 // @Failure 400 {object} interface{}
 // @Router /videos/{id} [delete]
-func deleteVideo(service services.VideoService) func (ctx *gin.Context) {
-	return func (ctx *gin.Context) {
+func deleteVideo(service services.VideoService) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
 		var video entities.Video
-		id, e := strconv.ParseUint(ctx.Param("id"), 10, 0)
+        id, e := strconv.ParseUint(ctx.Param("id"), 10, 64)
 
-		if e != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H { "error": "no ID parameter provided" })
-			return
-		}
+        if e != nil {
+            ctx.Set(constants.ErrorField, e)
+        }
 
 		video.ID = id
-		service.Delete(video)
+		service.Delete(&video)
 
-		ctx.JSON(http.StatusOK, gin.H { "message": "Video was deleted" })
+		ctx.Set(constants.ResponseField, "Video was deleted")
 	}
 }
 
 func RegisterVideoController(r *gin.RouterGroup, service services.VideoService) {
 	g := r.Group("/videos")
 
-	validate = validator2.New()
+	validate := validator2.New()
 	_ = validate.RegisterValidation("is-cool", validators.ValidateCoolTitle)
 
-	g.PUT("/:id", updateVideo(service))
+	g.PUT("/:id",
+		middlewares.BodyParserMiddleware(&entities.Video{}),
+		middlewares.SetBodyId("id"),
+		middlewares.ValidateBodyMiddleware(validate),
+		updateVideo(service))
+
 	g.DELETE("/:id", deleteVideo(service))
 	g.GET("/", findAll(service))
-	g.POST("/", middlewares.BasicAuth(), createVideo(service))
+
+	g.POST("/",
+		middlewares.BodyParserMiddleware(&entities.Video{}),
+		middlewares.ValidateBodyMiddleware(validate),
+		createVideo(service))
 }
