@@ -1,7 +1,6 @@
-package errors
+package api_errors
 
-type NoBodyError struct {
-}
+type NoBodyError struct{}
 
 func (_ *NoBodyError) Error() string {
 	return "No body provided"

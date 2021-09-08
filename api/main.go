@@ -2,26 +2,17 @@ package main
 
 import (
 	"log"
-	"net/http"
 
-	"github.com/ErhanKurnaz/awesome-cool-bot/api/controllers"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/database"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/docs"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/middlewares"
-	"github.com/ErhanKurnaz/awesome-cool-bot/api/repositories"
-	"github.com/ErhanKurnaz/awesome-cool-bot/api/services"
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-var (
-	db = database.SetupDBConnection()
-	videoRepository = repositories.NewVideoRepository(db)
-	videoService = services.NewVideoService(videoRepository)
-)
-
+var db = database.SetupDBConnection()
 
 func setupRouter() *gin.Engine {
 	engine := gin.Default()
@@ -29,15 +20,9 @@ func setupRouter() *gin.Engine {
 	url := ginSwagger.URL("http://localhost:4200/swagger/doc.json") // The url pointing to API definition
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
-    engine.Use(middlewares.ResponseMiddleware(), middlewares.ErrorResponseMiddleware())
+	engine.Use(middlewares.ResponseMiddleware(), middlewares.ErrorResponseMiddleware())
 	r := engine.Group("api/v1")
-
-	// Ping test
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{ "data": "pong!" })
-	})
-
-	controllers.RegisterVideoController(r, videoService)
+	RegisterControllers(r, db)
 
 	return engine
 }
@@ -52,7 +37,7 @@ func main() {
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:4200"
 	docs.SwaggerInfo.BasePath = "/api/v1"
-	docs.SwaggerInfo.Schemes = []string {"http"}
+	docs.SwaggerInfo.Schemes = []string{"http"}
 
 	r := setupRouter()
 	defer database.Close(db)

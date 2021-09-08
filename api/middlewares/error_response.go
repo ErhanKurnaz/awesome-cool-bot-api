@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/api_errors"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/constants"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/models"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/utils"
@@ -15,9 +16,9 @@ func ErrorResponseMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Next()
 
-        if utils.IsReqHandled(ctx) {
-            return
-        }
+		if utils.IsReqHandled(ctx) {
+			return
+		}
 
 		err, err_exists := ctx.Get(constants.ErrorField)
 
@@ -25,22 +26,15 @@ func ErrorResponseMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		casted_err, err_ok := err.(error)
+		casted_err, err_ok := err.(api_errors.ApiError)
 
 		if !err_ok {
 			utils.AbortWithErr(ctx, http.StatusInternalServerError,
-				errors.New(fmt.Sprintf("an error was specified %T didn't comply to the error interface", err)))
+				errors.New(fmt.Sprintf("an error was specified %T didn't comply to the ApiError interface", err)))
 
 			return
 		}
 
-		status, status_exists := ctx.Get(constants.StatusField)
-		status_int, cast_ok := status.(int)
-
-		if !status_exists || !cast_ok {
-			status = http.StatusBadRequest
-		}
-
-		utils.RespondJSON(ctx, status_int, models.NewErrorResponse(casted_err))
+		utils.RespondJSON(ctx, casted_err.Code(), models.NewErrorResponse(casted_err))
 	}
 }
