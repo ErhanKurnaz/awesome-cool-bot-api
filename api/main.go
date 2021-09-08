@@ -6,6 +6,7 @@ import (
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/database"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/docs"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/middlewares"
+	"github.com/ErhanKurnaz/awesome-cool-bot/api/registers"
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 	swaggerFiles "github.com/swaggo/files"
@@ -22,7 +23,8 @@ func setupRouter() *gin.Engine {
 
 	engine.Use(middlewares.ResponseMiddleware(), middlewares.ErrorResponseMiddleware())
 	r := engine.Group("api/v1")
-	RegisterControllers(r, db)
+	log.Println("haha")
+	registers.RegisterControllers(r, db)
 
 	return engine
 }

@@ -1,4 +1,4 @@
-package main
+package registers
 
 import (
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/controllers"

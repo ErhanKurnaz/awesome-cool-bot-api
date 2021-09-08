@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/entities"
+	uuid "github.com/satori/go.uuid"
 
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/constants"
 	"github.com/ErhanKurnaz/awesome-cool-bot/api/middlewares"
@@ -85,11 +85,11 @@ func updateVideo(service services.VideoService) func(ctx *gin.Context) {
 func deleteVideo(service services.VideoService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		var video entities.Video
-        id, e := strconv.ParseUint(ctx.Param("id"), 10, 64)
+		id, e := uuid.FromString(ctx.Param("id"))
 
-        if e != nil {
-            ctx.Set(constants.ErrorField, e)
-        }
+		if e != nil {
+			ctx.Set(constants.ErrorField, e)
+		}
 
 		video.ID = id
 		service.Delete(&video)
