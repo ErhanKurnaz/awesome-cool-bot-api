@@ -1,0 +1,166 @@
+definitions:
+  entities.Person:
+    properties:
+      age:
+        type: integer
+      createdAt:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - email
+    - firstName
+    - lastName
+    type: object
+  entities.Video:
+    properties:
+      author:
+        $ref: '#/definitions/entities.Person'
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+      url:
+        type: string
+    required:
+    - author
+    - description
+    - title
+    - url
+    type: object
+info:
+  contact: {}
+paths:
+  /videos:
+    get:
+      operationId: FindAll videos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Video'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+      summary: Finds all videos in the system
+      tags:
+      - videos
+      - list
+    post:
+      consumes:
+      - application/json
+      operationId: Create videos
+      parameters:
+      - description: Create video
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Video'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Video'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            type: object
+      summary: Creates a new video in the system
+      tags:
+      - videos
+      - create
+  /videos/{id}:
+    delete:
+      operationId: Delete videos
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Video'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            type: object
+      summary: Delete a video in the system
+      tags:
+      - videos
+      - delete
+    put:
+      consumes:
+      - application/json
+      operationId: Update videos
+      parameters:
+      - description: Update video
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Video'
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Video'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            type: object
+      summary: Update a video in the system
+      tags:
+      - videos
+      - update
+securityDefinitions:
+  bearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
